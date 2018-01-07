@@ -7,7 +7,6 @@ import time
 import os
 import sys
 import datetime
-import time
 import ass_maker
 import var_set
 import _thread
@@ -441,6 +440,9 @@ def pick_msg(s, user):
         send_dm_long('已收到'+user+'的指令')
         s = s.replace(' ', '')   #剔除弹幕中的所有空格
         _thread.start_new_thread(playlist_download, (s.replace('歌单', '', 1),user))
+    elif (s.find('一言') == 0):
+        output = os.popen('curl -s https://api.lvmoo.com/hitokoto/')
+        send_dm_long(str(output.read()))
     # else:
     #     print('not match anything')
 
