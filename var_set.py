@@ -2,16 +2,16 @@
 
 #需要修改的值
 
-path = '/home/pi/live'
+path = '/home/pi/Downloads/LIVE/bilibili'
 #本文件的路径，请修改
 
-roomid = '16703'
+roomid = '1148954'
 #房间id（真实id，不一定是网址里的那个数）
 
 cookie = ''
 #发送弹幕用的cookie
 
-download_api_url = 'http://qq.papapoi.com/163/'
+download_api_url = 'https://www.likai.xin/live/index.php'
 #获取音乐链接的api网址，服务器性能有限，尽量请换成自己的，php文件在php文件夹
 
 rtmp = 'rtmp://txy.live-send.acg.tv/live-txy/'
@@ -31,3 +31,5 @@ maxbitrate='3000'
 dm_size=20
 #每段弹幕的最大长度（20级以后可发30字）
 
+use_dht11 = false
+#是否使用dht11温湿度传感器
