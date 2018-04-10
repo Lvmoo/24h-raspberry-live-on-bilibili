@@ -468,6 +468,8 @@ def pick_msg(s, user):
         send_dm_long('已收到'+user+'的指令')
         s = s.replace(' ', '')   #剔除弹幕中的所有空格
         _thread.start_new_thread(playlist_download, (s.replace('歌单', '', 1),user))
+    elif (s.find('查询') == 0):
+        send_dm_long(user+'的瓜子余额还剩'+str(get_coin(user))+'个')
     elif (s.find('一言') == 0):
         output = os.popen('curl -s https://api.lvmoo.com/hitokoto/')
         send_dm_long(str(output.read()))
@@ -483,19 +485,21 @@ def send_dm(s):
     global cookie
     global roomid
     global dm_lock
+    global csrf_token
     while (dm_lock):
         #print('[log]wait for send dm')
         time.sleep(1)
     dm_lock = True
     try:
-        url = "http://api.live.bilibili.com/msg/send"
+        url = "https://api.live.bilibili.com/msg/send"
         postdata =urllib.parse.urlencode({	
         'color':'16777215',
         'fontsize':'25',
         'mode':'1',
         'msg':s,
         'rnd':'1510756027',
-        'roomid':roomid
+        'roomid':roomid,
+        'csrf_token':csrf_token
         }).encode('utf-8')
         header = {
         "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -533,10 +537,11 @@ def send_dm_long(s):
 def get_dm():
     global temp_dm
     global roomid
+    global csrf_token
     url = "http://api.live.bilibili.com/ajax/msg"
     postdata =urllib.parse.urlencode({	
     'token:':'',
-    'csrf_token:':'',
+    'csrf_token:':csrf_token,
     'roomid':roomid
     }).encode('utf-8')
     header = {
