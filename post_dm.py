@@ -158,7 +158,12 @@ def playlist_download(id,user):
     f = urllib.request.urlopen(download_api_url + "?%s" % params)   #设定获取的网址
     try:
         playlist = json.loads(f.read().decode('utf-8'))  #获取结果，并反序化
-        send_dm_long('正在下载歌单：'+playlist['playlist']['name']+'，共'+str(len(playlist['playlist']['tracks']))+'首')
+        if len(playlist['playlist']['tracks'])*100 > get_coin(user) and var_set.use_gift_check:
+            send_dm_long('用户'+user+'赠送的瓜子不够点'+str(len(playlist['playlist']['tracks']))+
+            '首歌哦,还差'+str(len(playlist['playlist']['tracks'])*100-get_coin(user))+'瓜子的礼物')
+            return
+        else:
+            send_dm_long('正在下载歌单：'+playlist['playlist']['name']+'，共'+str(len(playlist['playlist']['tracks']))+'首')
     except Exception as e:  #防炸
         print('shit')
         print(e)
