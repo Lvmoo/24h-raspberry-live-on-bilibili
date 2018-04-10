@@ -191,27 +191,31 @@ def download_av(video_url,user):
         filename = str(time.mktime(datetime.datetime.now().timetuple()))    #用时间戳设定文件名
         os.system('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1') #下载视频文件
         print('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1')
-        if(os.path.isfile(path+'/downloads/'+filename+'rendering1.flv')):
+        if(os.path.isfile(path+'/downloads/'+filename+'rendering1.flv')):   #判断视频格式
             v_format = 'flv'
         elif(os.path.isfile(path+'/downloads/'+filename+'rendering1.mp4')):
             v_format = 'mp4'
         else:
             send_dm_long('视频'+video_title+'下载失败，请重试')
+            if var_set.use_gift_check:
+                give_coin(user,500)
             return
-        ass_maker.make_ass(filename+'ok','点播人：'+user+"\\N视频："+video_title+"\\N"+video_url,path)
-        ass_maker.make_info(filename+'ok','视频：'+video_title+",点播人："+user,path)
+        ass_maker.make_ass(filename+'ok','点播人：'+user+"\\N视频："+video_title+"\\N"+video_url,path)  #生成字幕
+        ass_maker.make_info(filename+'ok','视频：'+video_title+",点播人："+user,path)   #生成介绍信息，用来查询
         send_dm_long('视频'+video_title+'下载完成，等待渲染')
-        while (encode_lock):
-            time.sleep(1)
-        encode_lock = True
+        while (encode_lock):    #渲染锁，如果现在有渲染任务，则无限循环等待
+            time.sleep(1)   #等待
+        encode_lock = True  #进入渲染，加上渲染锁，防止其他视频一起渲染
         send_dm_long('视频'+video_title+'正在渲染')
-        os.system('ffmpeg -i "'+path+'/downloads/'+filename+'rendering1.'+v_format+'" -aspect 16:9 -vf "scale=1280:720, ass='+path+"/downloads/"+filename+'ok.ass'+'" -c:v libx264 -preset ultrafast -maxrate '+var_set.maxbitrate+'k -tune fastdecode -acodec aac -b:a 192k "'+path+'/downloads/'+filename+'rendering.flv"')
-        encode_lock = False
-        del_file(filename+'rendering1.'+v_format)
-        os.rename(path+'/downloads/'+filename+'rendering.flv',path+'/downloads/'+filename+'ok.flv')
+        os.system('ffmpeg -threads 1 -i "'+path+'/downloads/'+filename+'rendering1.'+v_format+'" -aspect 16:9 -vf "scale=1280:720, ass='+path+"/downloads/"+filename+'ok.ass'+'" -c:v libx264 -preset ultrafast -maxrate '+var_set.maxbitrate+'k -tune fastdecode -acodec aac -b:a 192k "'+path+'/downloads/'+filename+'rendering.flv"')
+        encode_lock = False #关闭渲染锁，以便其他任务继续渲染
+        del_file(filename+'rendering1.'+v_format)   #删除渲染所用的原文件
+        os.rename(path+'/downloads/'+filename+'rendering.flv',path+'/downloads/'+filename+'ok.flv') #重命名文件，标记为渲染完毕（ok）
         send_dm_long('视频'+video_title+'渲染完毕，已加入播放队列')
-    except:
+    except: #报错提示，一般只会出现在获取标题失败时出现，就是点播参数不对
         send_dm_long('出错了：请检查命令或重试')
+        if var_set.use_gift_check:
+            give_coin(user,500)
 
 #搜索歌曲并下载
 def search_song(s,user):
