@@ -171,16 +171,18 @@ def playlist_download(id,user):
     for song in playlist['playlist']['tracks']:
         print('name:'+song['name']+'id:'+str(song['id']))
         get_download_url(song['id'], 'id', user, song['name'])
-
-    
-
-#下载b站番剧视频，传入值：网址、点播人用户名
-def download_bilibili(video_url,user):
+        
+#下载b站任意视频，传入值：网址、点播人用户名
+def download_av(video_url,user):
     global encode_lock  #视频渲染锁，用来排队
     if(clean_files()):  #检查空间是否在设定值以内，并自动删除多余视频缓存
         send_dm_long('树莓存储空间已爆炸，请联系up')
         return
+    if check_coin(user, 500) == False and var_set.use_gift_check:   #扣掉瓜子数
+        send_dm_long('用户'+user+'赠送的瓜子不够点视频哦,还差'+str(500-get_coin(user))+'瓜子的礼物')
+        return
     try:
+        v_format = 'flv'
         print('[log]downloading bilibili video:'+str(video_url))
         video_info = json.loads(os.popen('you-get '+video_url+' --json').read())    #获取视频标题，标题错误则说明点播参数不对，跳到except
         video_title = video_info['title']   #获取标题
