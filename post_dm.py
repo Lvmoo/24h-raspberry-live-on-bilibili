@@ -87,6 +87,10 @@ def get_download_url(s, t, user, song = "nothing"):
         if check_coin(user, 100) == False:
             send_dm_long('用户'+user+'赠送的瓜子不够点歌哦,还差'+str(100-get_coin(user))+'瓜子的礼物')
             return
+    elif t == 'mv' and var_set.use_gift_check:
+        if check_coin(user, 500) == False:
+            send_dm_long('用户'+user+'赠送的瓜子不够点mv哦,还差'+str(500-get_coin(user))+'瓜子的礼物')
+            return
     send_dm_long('正在下载'+t+str(s))
     print('[log]getting url:'+t+str(s))
     params = urllib.parse.urlencode({t: s}) #格式化参数
@@ -125,7 +129,7 @@ def get_download_url(s, t, user, song = "nothing"):
                 time.sleep(1)   #等待
             encode_lock = True  #进入渲染，加上渲染锁，防止其他视频一起渲染
             send_dm_long(t+str(s)+'正在渲染')
-            os.system('ffmpeg -i "'+path+'/downloads/'+filename+'.mp4" -aspect 16:9 -vf "scale=1280:720, ass='+path+"/downloads/"+filename+'ok.ass'+'" -c:v libx264 -preset ultrafast -maxrate '+var_set.maxbitrate+'k -tune fastdecode -acodec aac -b:a 192k "'+path+'/downloads/'+filename+'rendering.flv"')
+            os.system('ffmpeg -threads 1 -i "'+path+'/downloads/'+filename+'.mp4" -aspect 16:9 -vf "scale=1280:720, ass='+path+"/downloads/"+filename+'ok.ass'+'" -c:v libx264 -preset ultrafast -maxrate '+var_set.maxbitrate+'k -tune fastdecode -acodec aac -b:a 192k "'+path+'/downloads/'+filename+'rendering.flv"')
             encode_lock = False #关闭渲染锁，以便其他任务继续渲染
             del_file(filename+'.mp4')   #删除渲染所用的原文件
             os.rename(path+'/downloads/'+filename+'rendering.flv',path+'/downloads/'+filename+'ok.flv') #重命名文件，标记为渲染完毕（ok）
@@ -138,6 +142,10 @@ def get_download_url(s, t, user, song = "nothing"):
             print('[error]log error')
     except: #下载出错
         send_dm_long('出错了：请检查命令或重试')
+        if t == 'id' and var_set.use_gift_check:   #归还用掉的瓜子
+            give_coin(user,100)
+        elif t == 'mv' and var_set.use_gift_check:
+            give_coin(user,500)
         print('[log]下载文件出错：'+t+str(s)+',url:'+url)
         del_file(filename+'.mp3')
         del_file(filename+'.mp4')
