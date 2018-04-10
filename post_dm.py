@@ -190,37 +190,6 @@ def download_av(video_url,user):
         #send_dm('注意，视频下载十分费时，请耐心等待')
         filename = str(time.mktime(datetime.datetime.now().timetuple()))    #用时间戳设定文件名
         os.system('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1') #下载视频文件
-        ass_maker.make_ass(filename+'ok',"点播人："+user+"\\N番剧："+video_title+"\\N"+video_url,path) #生成字幕
-        ass_maker.make_info(filename+'ok','番剧：'+video_title+",点播人："+user,path)  #生成介绍信息，用来查询
-        send_dm_long('番剧'+video_title+'下载完成，等待渲染')
-        while (encode_lock):    #渲染锁，如果现在有渲染任务，则无限循环等待
-            time.sleep(1)   #等待
-        encode_lock = True  #进入渲染，加上渲染锁，防止其他视频一起渲染
-        send_dm_long('番剧'+video_title+'正在渲染')
-        os.system('ffmpeg -i "'+path+'/downloads/'+filename+'rendering1.flv" -aspect 16:9 -vf "scale=1280:720, ass='+path+"/downloads/"+filename+'ok.ass'+'" -c:v libx264 -preset ultrafast -maxrate '+var_set.maxbitrate+'k -tune fastdecode -acodec aac -b:a 192k "'+path+'/downloads/'+filename+'rendering.flv"')
-        encode_lock = False #关闭渲染锁，以便其他任务继续渲染
-        del_file(filename+'rendering1.flv') #删除渲染所用的原文件
-        os.rename(path+'/downloads/'+filename+'rendering.flv',path+'/downloads/'+filename+'ok.flv') #重命名文件，标记为渲染完毕（ok）
-        send_dm_long('番剧'+video_title+'渲染完毕，已加入播放队列')
-    except: #报错提示，一般只会出现在获取标题失败时出现，就是点播参数不对
-        send_dm_long('出错了：请检查命令或重试')
-        
-#下载b站任意视频，传入值：网址、点播人用户名
-#此部分逻辑与“下载b站番剧视频”部分完全相同，不另行作注释解释
-def download_av(video_url,user):
-    global encode_lock
-    if(clean_files()):
-        send_dm_long('树莓存储空间已爆炸，请联系up')
-        return
-    try:
-        v_format = 'flv'
-        print('[log]downloading bilibili video:'+str(video_url))
-        video_info = json.loads(os.popen('you-get '+video_url+' --json').read())
-        video_title = video_info['title']
-        send_dm_long('正在下载'+video_title)
-        #send_dm('注意，视频下载十分费时，请耐心等待')
-        filename = str(time.mktime(datetime.datetime.now().timetuple()))
-        os.system('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1')
         print('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1')
         if(os.path.isfile(path+'/downloads/'+filename+'rendering1.flv')):
             v_format = 'flv'
