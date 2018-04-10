@@ -249,6 +249,49 @@ def search_mv(s,user):
     result_id = result['result']['mvs'][0]['id']    #提取mv id
     _thread.start_new_thread(get_download_url, (result_id, 'mv', user,s))   #扔到下载那里下载
 
+#获取赠送过的瓜子数量
+def get_coin(user):
+    gift_count = 0
+    try:
+        gift_count = numpy.load('users/'+user+'.npy')
+    except:
+        gift_count = 0
+    return gift_count
+
+#扣除赠送过的瓜子数量
+def take_coin(user, take_sum):
+    gift_count = 0
+    try:
+        gift_count = numpy.load('users/'+user+'.npy')
+    except:
+        gift_count = 0
+    gift_count = gift_count - take_sum
+    try:
+        numpy.save('users/'+user+'.npy', gift_count)
+    except:
+        print('create error')
+
+#检查并扣除指定数量的瓜子
+def check_coin(user, take_sum):
+    if get_coin(user) >= take_sum:
+        take_coin(user, take_sum)
+        return True
+    else:
+        return False
+
+#给予赠送过的瓜子数量
+def give_coin(user, give_sum):
+    gift_count = 0
+    try:
+        gift_count = numpy.load('users/'+user+'.npy')
+    except:
+        gift_count = 0
+    gift_count = gift_count + give_sum
+    try:
+        numpy.save('users/'+user+'.npy', gift_count)
+    except:
+        print('create error')
+ 
 #切歌请求次数统计
 jump_to_next_counter = 0
 rp_lock = False
@@ -319,7 +362,7 @@ def pick_msg(s, user):
             send_dm_long('出错了：没这首歌')
     elif (s.find('喵') > -1):
         replay = ["喵？？", "喵喵！", "喵。。喵？", "喵喵喵~", "喵！"]
-        send_dm_long(replay[random.randint(0, len(replay))])  #用于测试是否崩掉
+        send_dm_long(replay[random.randint(0, len(replay)-1)])  #用于测试是否崩掉
     elif (s == '切歌'):   #切歌请求
         if(encode_lock):    #切歌原理为killall ffmpeg，但是如果有渲染任务，kill后也会结束渲染进程，会出错
             send_dm_long('有渲染任务，无法切歌')
