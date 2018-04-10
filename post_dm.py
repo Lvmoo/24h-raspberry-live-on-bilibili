@@ -554,7 +554,7 @@ def get_dm():
     "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0"
     }
     req = urllib.request.Request(url,postdata,header)
-    dm_result = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
+    dm_result = json.loads(urllib.request.urlopen(req,timeout=1).read().decode('utf-8'))
     #for t_get in dm_result['data']['room']:
         #print('[log]['+t_get['timeline']+']'+t_get['nickname']+':'+t_get['text'])
     return dm_result
@@ -588,10 +588,10 @@ def test():
 
 print('程序已启动，连接房间id：'+roomid)
 send_dm_long('弹幕监控已启动，可以点歌了')
-while True: #防炸
-    try:
-        get_dm_loop()   #开启弹幕获取循环函数
-    except Exception as e:  #防炸
-        print('shit')
-        print(e)
-        dm_lock = False #解开弹幕锁，以免因炸了而导致弹幕锁没解开，进而导致一直锁着发不出弹幕
+#while True: #防炸
+#    try:
+#        get_dm_loop()   #开启弹幕获取循环函数
+#    except Exception as e:  #防炸
+#        print('shit')
+#        print(e)
+#        dm_lock = False #解开弹幕锁，以免因炸了而导致弹幕锁没解开，进而导致一直锁着发不出弹幕
