@@ -10,6 +10,8 @@ roomid = '1148954'
 
 cookie = ''
 #发送弹幕用的cookie
+csrf_token = ''
+#发送弹幕用的csrf_token
 
 download_api_url = 'https://www.likai.xin/live/index.php'
 #获取音乐链接的api网址，服务器性能有限，尽量请换成自己的，php文件在php文件夹
