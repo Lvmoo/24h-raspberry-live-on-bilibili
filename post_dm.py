@@ -438,17 +438,6 @@ def pick_msg(s, user):
             send_dm_long('渲染列表展示完毕，一共'+str(songs_count)+'个')
         else:
             send_dm_long('渲染列表前5个展示完毕，一共'+str(songs_count)+'个')
-    elif (s.find('番剧') == 0):
-        send_dm_long('您的直播间因“禁止盗播新番”，已被管x员“切断”，请更改直播内容。')
-        return
-        try:
-            send_dm_long('已收到'+user+'的指令')
-            #番剧网址格式：https://bangumi.bilibili.com/anime/123/play#456
-            ture_url=s.replace('.','/play#')
-            ture_url=ture_url.replace('番剧','https://bangumi.bilibili.com/anime/')
-            _thread.start_new_thread(download_bilibili, (ture_url,user))
-        except:
-            print('[log]video not found')
     elif (s.find('av') == 0):
         s = s.replace(' ', '')   #剔除弹幕中的所有空格
         try:
