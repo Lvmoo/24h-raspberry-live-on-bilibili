@@ -105,6 +105,3 @@ while True:
                 os.system('ffmpeg -threads 0 -re -i "'+path+"/default_mp3/"+mp3_files[mp3_ran]+'" -vcodec copy -acodec copy -f flv "'+rtmp+live_code+'"')
     except Exception as e:
         print(e)
-
-
-        
