@@ -12,11 +12,14 @@ import var_set
 import _thread
 import random
 import dht11
+import get_info
+import numpy
 
 path = var_set.path         #引入设置路径
 roomid = var_set.roomid     #引入设置房间号
 cookie = var_set.cookie     #引入设置cookie
 download_api_url = var_set.download_api_url #引入设置的音乐下载链接获取接口
+csrf_token = var_set.csrf_token
 
 dm_lock = False         #弹幕发送锁，用来排队
 encode_lock = False     #视频渲染锁，用来排队
@@ -80,6 +83,10 @@ def get_download_url(s, t, user, song = "nothing"):
     if(clean_files()):  #检查空间是否在设定值以内，并自动删除多余视频缓存
         send_dm_long('树莓存储空间已爆炸，请联系up')
         return
+    if t == 'id' and var_set.use_gift_check:   #检查送过的礼物数量
+        if check_coin(user, 100) == False:
+            send_dm_long('用户'+user+'赠送的瓜子不够点歌哦,还差'+str(100-get_coin(user))+'瓜子的礼物')
+            return
     send_dm_long('正在下载'+t+str(s))
     print('[log]getting url:'+t+str(s))
     params = urllib.parse.urlencode({t: s}) #格式化参数
