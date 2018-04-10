@@ -189,7 +189,7 @@ def download_av(video_url,user):
         send_dm_long('正在下载'+video_title)
         #send_dm('注意，视频下载十分费时，请耐心等待')
         filename = str(time.mktime(datetime.datetime.now().timetuple()))    #用时间戳设定文件名
-        os.system('you-get '+video_url+' --format=flv -o '+path+'/downloads -O '+filename+'rendering1') #下载视频文件
+        os.system('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1') #下载视频文件
         ass_maker.make_ass(filename+'ok',"点播人："+user+"\\N番剧："+video_title+"\\N"+video_url,path) #生成字幕
         ass_maker.make_info(filename+'ok','番剧：'+video_title+",点播人："+user,path)  #生成介绍信息，用来查询
         send_dm_long('番剧'+video_title+'下载完成，等待渲染')
