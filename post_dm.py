@@ -573,7 +573,6 @@ def get_dm_loop():
     temp_dm = get_dm()
     while True:
         dm_result = get_dm()
-        can_show = False
         for t_get in dm_result['data']['room']:
             if(check_dm(t_get)):
                 print('[log]['+t_get['timeline']+']'+t_get['nickname']+':'+t_get['text'])
