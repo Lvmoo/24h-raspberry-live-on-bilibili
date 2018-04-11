@@ -2,7 +2,7 @@
 
 #需要修改的值
 
-path = '/home/pi/Downloads/LIVE/bilibili'
+path = '/home/pi/live'
 #本文件的路径，请修改
 
 roomid = '1148954'
