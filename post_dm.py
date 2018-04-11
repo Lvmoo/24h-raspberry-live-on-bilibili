@@ -49,27 +49,42 @@ def clean_files():
         files.sort()    #排序文件，以便按日期删除多余文件
         for f in files:
             if((f.find('.flv') != -1) & (check_free())):    #检查可用空间是否依旧超过设置大小，flv文件
-                try:
-                    os.remove(path+'/default_mp3/'+f)   #删除文件
-                except Exception as e:
-                    print(e)
+                del_file_default_mp3(f)   #删除文件
             elif((f.find('.mp3') != -1) & (check_free())):    #检查可用空间是否依旧超过设置大小，mp3文件
-                try:
-                    os.remove(path+'/default_mp3/'+f)   #删除文件
-                    os.remove(path+'/default_mp3/'+f.replace(".mp3",'')+'.ass')
-                    os.remove(path+'/default_mp3/'+f.replace(".mp3",'')+'.info')
-                except Exception as e:
-                    print(e)
+                del_file_default_mp3(f)   #删除文件
+                del_file_default_mp3(f.replace(".mp3",'')+'.ass')
+                del_file_default_mp3(f.replace(".mp3",'')+'.info')
             elif(check_free() == False):    #符合空间大小占用设置时，停止删除操作
                 is_boom = False
     else:
         is_boom = False
     return is_boom
 
+#删除之前残留的没渲染完的文件
+def last_files():
+    files = os.listdir(path+'/downloads') #获取下载文件夹下所有文件
+    for f in files:
+        if f.find('rendering.flv') != -1:
+            del_file(f)   #删除文件
+            del_file(f.replace('rendering.flv','ok.info'))
+            del_file(f.replace('rendering.flv','ok.ass'))
+        elif f.find('.mp4') != -1 or f.find('rendering1') != -1:
+            del_file(f)
+last_files()
+
 #用于删除文件，防止报错
 def del_file(f):
     try:
+        print('delete'+path+'/downloads/'+f)
         os.remove(path+'/downloads/'+f)
+    except:
+        print('delete error')
+
+#用于删除文件，防止报错
+def del_file_default_mp3(f):
+    try:
+        print('delete'+path+'/default_mp3/'+f)
+        os.remove(path+'/default_mp3/'+f)
     except:
         print('delete error')
 
@@ -94,18 +109,18 @@ def get_download_url(s, t, user, song = "nothing"):
     send_dm_long('正在下载'+t+str(s))
     print('[log]getting url:'+t+str(s))
     params = urllib.parse.urlencode({t: s}) #格式化参数
-    f = urllib.request.urlopen(download_api_url + "?%s" % params)   #设定获取的网址
+    f = urllib.request.urlopen(download_api_url + "?%s" % params,timeout=5)   #设定获取的网址
     url = f.read().decode('utf-8')  #读取结果
     try:
         filename = str(time.mktime(datetime.datetime.now().timetuple()))    #获取时间戳，用来当作文件名
         if(t == 'id'):  #当参数为歌曲时
             urllib.request.urlretrieve(url, path+'/downloads/'+filename+'.mp3') #下载歌曲
             lyric_get = urllib.parse.urlencode({'lyric': s})    #格式化参数
-            lyric_w = urllib.request.urlopen(download_api_url + "?%s" % lyric_get)  #设定获取歌词的网址
+            lyric_w = urllib.request.urlopen(download_api_url + "?%s" % lyric_get,timeout=5)  #设定获取歌词的网址
             lyric = lyric_w.read().decode('utf-8')  #获取歌词文件
 
             tlyric_get = urllib.parse.urlencode({'tlyric': s})    #格式化参数
-            tlyric_w = urllib.request.urlopen(download_api_url + "?%s" % tlyric_get)  #设定获取歌词的网址
+            tlyric_w = urllib.request.urlopen(download_api_url + "?%s" % tlyric_get,timeout=5)  #设定获取歌词的网址
             tlyric = tlyric_w.read().decode('utf-8')  #获取歌词文件
 
             if(song == "nothing"):  #当直接用id点歌时
@@ -155,7 +170,7 @@ def get_download_url(s, t, user, song = "nothing"):
 #下载歌单
 def playlist_download(id,user):
     params = urllib.parse.urlencode({'playlist': str(id)}) #格式化参数
-    f = urllib.request.urlopen(download_api_url + "?%s" % params)   #设定获取的网址
+    f = urllib.request.urlopen(download_api_url + "?%s" % params,timeout=3)   #设定获取的网址
     try:
         playlist = json.loads(f.read().decode('utf-8'))  #获取结果，并反序化
         if len(playlist['playlist']['tracks'])*100 > get_coin(user) and var_set.use_gift_check:
@@ -171,7 +186,7 @@ def playlist_download(id,user):
     for song in playlist['playlist']['tracks']:
         print('name:'+song['name']+'id:'+str(song['id']))
         get_download_url(song['id'], 'id', user, song['name'])
-        
+
 #下载b站任意视频，传入值：网址、点播人用户名
 def download_av(video_url,user):
     global encode_lock  #视频渲染锁，用来排队
@@ -189,7 +204,7 @@ def download_av(video_url,user):
         send_dm_long('正在下载'+video_title)
         #send_dm('注意，视频下载十分费时，请耐心等待')
         filename = str(time.mktime(datetime.datetime.now().timetuple()))    #用时间戳设定文件名
-        os.system('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1') #下载视频文件
+        os.system('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1')  #下载视频文件
         print('you-get '+video_url+' -o '+path+'/downloads -O '+filename+'rendering1')
         if(os.path.isfile(path+'/downloads/'+filename+'rendering1.flv')):   #判断视频格式
             v_format = 'flv'
@@ -221,7 +236,7 @@ def download_av(video_url,user):
 def search_song(s,user):
     print('[log]searching song:'+s)
     params = urllib.parse.urlencode({'type': 1, 's': s})    #格式化参数
-    f = urllib.request.urlopen("http://s.music.163.com/search/get/?%s" % params)    #设置接口网址
+    f = urllib.request.urlopen("http://s.music.163.com/search/get/?%s" % params,timeout=3)    #设置接口网址
     search_result = json.loads(f.read().decode('utf-8'))    #获取结果
     result_id = search_result["result"]["songs"][0]["id"]   #提取歌曲id
     _thread.start_new_thread(get_download_url, (result_id, 'id', user,s))   #扔到下载那里下载
@@ -229,7 +244,7 @@ def search_song(s,user):
 #搜索mv并下载
 def search_mv(s,user):
     url = "http://music.163.com/api/search/get/"
-    postdata =urllib.parse.urlencode({	
+    postdata =urllib.parse.urlencode({
     's':s,
     'offset':'1',
     'limit':'10',
@@ -245,7 +260,7 @@ def search_mv(s,user):
     "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0"
     }
     req = urllib.request.Request(url,postdata,header)   #设置接口网址
-    result = json.loads(urllib.request.urlopen(req).read().decode('utf-8')) #获取结果
+    result = json.loads(urllib.request.urlopen(req,timeout=3).read().decode('utf-8')) #获取结果
     result_id = result['result']['mvs'][0]['id']    #提取mv id
     _thread.start_new_thread(get_download_url, (result_id, 'mv', user,s))   #扔到下载那里下载
 
@@ -291,7 +306,7 @@ def give_coin(user, give_sum):
         numpy.save('users/'+user+'.npy', gift_count)
     except:
         print('create error')
- 
+
 #切歌请求次数统计
 jump_to_next_counter = 0
 rp_lock = False
@@ -492,7 +507,7 @@ def send_dm(s):
     dm_lock = True
     try:
         url = "https://api.live.bilibili.com/msg/send"
-        postdata =urllib.parse.urlencode({	
+        postdata =urllib.parse.urlencode({
         'color':'16777215',
         'fontsize':'25',
         'mode':'1',
@@ -512,7 +527,7 @@ def send_dm(s):
         "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0"
         }
         req = urllib.request.Request(url,postdata,header)
-        dm_result = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
+        dm_result = json.loads(urllib.request.urlopen(req,timeout=3).read().decode('utf-8'))
         if len(dm_result['msg']) > 0:
             print('[error]弹幕发送失败：'+s)
             print(dm_result)
@@ -522,7 +537,7 @@ def send_dm(s):
         print('[error]send dm error')
     time.sleep(1.5)
     dm_lock = False
-    
+
 #每条弹幕最长只能发送20字符，过长的弹幕分段发送
 def send_dm_long(s):
     n=var_set.dm_size
@@ -539,7 +554,7 @@ def get_dm():
     global roomid
     global csrf_token
     url = "http://api.live.bilibili.com/ajax/msg"
-    postdata =urllib.parse.urlencode({	
+    postdata =urllib.parse.urlencode({
     'token:':'',
     'csrf_token:':csrf_token,
     'roomid':roomid
@@ -587,10 +602,10 @@ def test():
 
 print('程序已启动，连接房间id：'+roomid)
 send_dm_long('弹幕监控已启动，可以点歌了')
-#while True: #防炸
-#    try:
-#        get_dm_loop()   #开启弹幕获取循环函数
-#    except Exception as e:  #防炸
-#        print('shit')
-#        print(e)
-#        dm_lock = False #解开弹幕锁，以免因炸了而导致弹幕锁没解开，进而导致一直锁着发不出弹幕
+# while True: #防炸
+#     try:
+#         get_dm_loop()   #开启弹幕获取循环函数
+#     except Exception as e:  #防炸
+#         print('shit')
+#         print(e)
+#         dm_lock = False #解开弹幕锁，以免因炸了而导致弹幕锁没解开，进而导致一直锁着发不出弹幕
