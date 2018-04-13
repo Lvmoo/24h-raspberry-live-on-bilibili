@@ -320,7 +320,7 @@ def pick_msg(s, user):
     global jump_to_next_counter #切歌请求次数统计
     global encode_lock  #视频渲染任务锁
     global rp_lock
-    if ((user=='Plumpie') | (user=='KKKK')):    #debug使用，请自己修改
+    if ((user=='PlumPie') | (user=='KKKK')):    #debug使用，请自己修改
         if(s=='锁定'):
             rp_lock = True
             send_dm_long('已锁定点播功能，不响应任何弹幕')
@@ -407,7 +407,7 @@ def pick_msg(s, user):
             send_dm_long('有渲染任务，无法切歌')
             return
         jump_to_next_counter += 1   #切歌次数统计加一
-        if((user=='Plumpie') | (user=='KKKK')): #debug使用，请自己修改
+        if((user=='PlumPie') | (user=='KKKK')): #debug使用，请自己修改
             jump_to_next_counter=5
         if(jump_to_next_counter < 5):   #次数未达到五次
             send_dm_long('已收到'+str(jump_to_next_counter)+'次切歌请求，达到五次将切歌')
