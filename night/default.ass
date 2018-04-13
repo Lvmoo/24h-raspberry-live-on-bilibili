@@ -1,0 +1,24 @@
+﻿[Script Info]
+Title: Default ASS file
+ScriptType: v4.00+
+WrapStyle: 2
+Collisions: Normal
+PlayResX: 960
+PlayResY: 720
+ScaledBorderAndShadow: yes
+Video Zoom Percent: 1
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,微软雅黑,20,&H000000EE,&H000000EE,&H00FFCC66,&H500000EE,0,0,0,0,100.0,100.0,0.0,0.0,1,3.5546875,3.0,2,10,10,5,1
+Style: left_down,微软雅黑,20,&H000000EE,&H000000EE,&H00FFCC66,&H500000EE,0,0,0,0,100.0,100.0,0.0,0.0,1,3.5546875,3.0,1,10,10,5,1
+Style: right_down,微软雅黑,20,&H000000EE,&H000000EE,&H00FFCC66,&H500000EE,0,0,0,0,100.0,100.0,0.0,0.0,1,3.5546875,3.0,3,10,10,5,1
+Style: left_up,微软雅黑,24,&H000000EE,&H000000EE,&H00FFCC66,&H500000EE,0,0,0,0,100.0,100.0,0.0,0.0,1,3.5546875,3.0,7,10,10,5,1
+Style: right_up,微软雅黑,20,&H000000EE,&H000000EE,&H00FFCC66,&H500000EE,0,0,0,0,100.0,100.0,0.0,0.0,1,3.5546875,3.0,9,10,10,5,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.00,9:00:00.00,left_down,,0,0,0,,深夜了11.00 p.m. ~ 5.00 a.m.\N祝你做个绝世好梦~晚安~
+Dialogue: 2,0:00:00.00,9:00:00.00,right_down,,0,0,0,,树莓派强力驱动
+Dialogue: 2,0:00:00.00,9:00:00.00,left_up,,0,0,0,,世界第一吃货殿下频道\N晚间频道
+Dialogue: 2,0:00:00.00,9:00:00.00,right_up,,0,0,0,,弹幕点播方法请看直播间简介哦~\N手机请点击直播间标题查看
