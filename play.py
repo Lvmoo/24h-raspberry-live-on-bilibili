@@ -51,9 +51,9 @@ while True:
                 seconds=audio.info.length   #获取时长
                 print('mp3 long:'+convert_time(seconds))
                 if not os.path.isfile(path+'/night/'+night_files[night_ran]+'.ass'):
-                    ass_maker.make_ass('../night/'+night_files[night_ran],'深夜了11.00 p.m. ~ 5.00 a.m.\\N祝你做个绝世好梦~晚安~\\N当前文件名：'+night_files[night_ran],path)
+                    ass_maker.make_ass('../night/'+night_files[night_ran].replace('.mp3',''),'深夜了11.00 p.m. ~ 5.00 a.m.\\N祝你做个绝世好梦~晚安~\\N当前文件名：'+night_files[night_ran],path)
                 print('ffmpeg -threads 0 -re -loop 1 -r 2 -t '+str(int(seconds))+' -f image2 -i "'+path+'/default_pic/'+pic_files[pic_ran]+'" -i "'+path+'/night/'+night_files[night_ran]+'" -vf ass="'+path+'/night/'+night_files[night_ran]+'.ass" -pix_fmt yuv420p -preset ultrafast -maxrate '+var_set.maxbitrate+'k -acodec copy -c:v h264_omx -f flv "'+rtmp+live_code+'"')
-                os.system('ffmpeg -threads 0 -re -loop 1 -r 2 -t '+str(int(seconds))+' -f image2 -i "'+path+'/default_pic/'+pic_files[pic_ran]+'" -i "'+path+'/night/'+night_files[night_ran]+'" -vf ass="'+path+'/night/'+night_files[night_ran]+'.ass" -pix_fmt yuv420p -preset ultrafast -maxrate '+var_set.maxbitrate+'k -acodec copy -c:v h264_omx -f flv "'+rtmp+live_code+'"')
+                os.system('ffmpeg -threads 0 -re -loop 1 -r 2 -t '+str(int(seconds))+' -f image2 -i "'+path+'/default_pic/'+pic_files[pic_ran]+'" -i "'+path+'/night/'+night_files[night_ran]+'" -vf ass="'+path+'/night/'+night_files[night_ran].replace('.mp3','')+'.ass" -pix_fmt yuv420p -preset ultrafast -maxrate '+var_set.maxbitrate+'k -acodec copy -c:v h264_omx -f flv "'+rtmp+live_code+'"')
             continue
 
         files = os.listdir(path+'/downloads')   #获取文件夹下全部文件
